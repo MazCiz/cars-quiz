@@ -64,9 +64,20 @@ export default async function Home() {
             >
               Take the quiz →
             </Link>
-            <Link href="/metrics" className="mt-3 block text-center text-xs text-neutral-500 hover:underline">
-              See stats & suggest a question
-            </Link>
+            <div className="mt-3 grid grid-cols-2 gap-2">
+              <Link
+                href="/metrics"
+                className="rounded-lg border border-neutral-200 dark:border-neutral-800 text-sm font-medium py-2.5 text-center hover:border-neutral-400 dark:hover:border-neutral-600"
+              >
+                Quiz stats
+              </Link>
+              <Link
+                href="/suggest"
+                className="rounded-lg border border-neutral-200 dark:border-neutral-800 text-sm font-medium py-2.5 text-center hover:border-neutral-400 dark:hover:border-neutral-600"
+              >
+                Suggest a question
+              </Link>
+            </div>
           </>
         ) : (
           <p className="mt-6 text-xs text-neutral-400">

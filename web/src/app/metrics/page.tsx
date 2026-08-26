@@ -107,86 +107,12 @@ export default function MetricsPage() {
           </div>
         )}
 
-        <SuggestForm />
-
         <p className="mt-6 text-center text-xs text-neutral-400">
           <Link href="/" className="hover:underline">Home</Link>
+          {" · "}
+          <Link href="/suggest" className="hover:underline">Suggest a question</Link>
         </p>
       </div>
     </main>
-  );
-}
-
-function SuggestForm() {
-  const [text, setText] = useState("");
-  const [email, setEmail] = useState("");
-  const [status, setStatus] = useState<"idle" | "submitting" | "done" | "error">("idle");
-  const [error, setError] = useState("");
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus("submitting");
-    setError("");
-    try {
-      const res = await fetch(`${API_URL}/quiz/suggestions`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
-        body: JSON.stringify({ text, email: email || undefined }),
-      });
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.errors?.text?.[0] ?? "Please try again.");
-      }
-      setStatus("done");
-      setText("");
-      setEmail("");
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong.");
-      setStatus("error");
-    }
-  }
-
-  return (
-    <div className="mt-8 rounded-2xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5">
-      <h2 className="text-sm font-medium">Suggest a question</h2>
-      <p className="text-xs text-neutral-500 mt-0.5 mb-3">
-        Got a question we should ask? We&apos;ll save it for review (it won&apos;t appear in the quiz).
-      </p>
-
-      {status === "done" ? (
-        <div className="text-sm text-green-700 dark:text-green-400">
-          Thanks — your suggestion was saved.{" "}
-          <button onClick={() => setStatus("idle")} className="underline">Suggest another</button>
-        </div>
-      ) : (
-        <form onSubmit={submit} className="flex flex-col gap-2">
-          <textarea
-            required
-            minLength={5}
-            maxLength={500}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="e.g. How important is towing capacity to you?"
-            rows={3}
-            className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
-          />
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Email (optional)"
-            className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
-          />
-          {status === "error" && <p className="text-xs text-red-600 dark:text-red-400">{error}</p>}
-          <button
-            type="submit"
-            disabled={status === "submitting"}
-            className="self-start rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-sm font-medium px-4 py-2 disabled:opacity-50"
-          >
-            {status === "submitting" ? "Sending…" : "Submit suggestion"}
-          </button>
-        </form>
-      )}
-    </div>
   );
 }
