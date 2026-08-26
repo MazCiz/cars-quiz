@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    // Claude API — used to generate the quiz's personalized car recommendation.
+    // Without a key the quiz falls back to a rule-based recommendation.
+    'anthropic' => [
+        'key' => env('ANTHROPIC_API_KEY'),
+        'model' => env('ANTHROPIC_MODEL', 'claude-opus-4-8'),
+    ],
+
 ];

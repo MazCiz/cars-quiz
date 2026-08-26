@@ -1,6 +1,6 @@
-// Scaffold landing page: calls the Laravel API's /ping (server-side) to show the
-// whole stack — Next.js → Laravel → Postgres — is wired together. Replace with
-// the real Cars Quiz UI.
+// Landing page: shows the stack is wired together (Next.js → Laravel → Postgres)
+// and links into the quiz.
+import Link from "next/link";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000/api";
 
@@ -56,11 +56,18 @@ export default async function Home() {
           ))}
         </ul>
 
-        <p className="mt-6 text-xs text-neutral-400">
-          {apiUp
-            ? "All set — start building. Edit src/app/page.tsx (web) and routes/api.php (api)."
-            : "Start the API: in ../api run `php artisan serve`, and `docker compose up -d` for Postgres."}
-        </p>
+        {apiUp ? (
+          <Link
+            href="/quiz"
+            className="mt-6 block w-full rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-sm font-medium py-3 text-center"
+          >
+            Take the quiz →
+          </Link>
+        ) : (
+          <p className="mt-6 text-xs text-neutral-400">
+            Start the API: in ../api run `php artisan serve`, and `docker compose up -d` for Postgres.
+          </p>
+        )}
       </div>
     </main>
   );

@@ -1,8 +1,13 @@
 <?php
 
+use App\Http\Controllers\QuizController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
+
+// Cars Quiz — fetch the questions and submit answers for an AI recommendation.
+Route::get('/quiz/questions', [QuizController::class, 'questions']);
+Route::post('/quiz/submit', [QuizController::class, 'submit']);
 
 // Health check — confirms the API is up and can reach Postgres. The Next.js
 // frontend calls this to verify the full stack is wired together.
