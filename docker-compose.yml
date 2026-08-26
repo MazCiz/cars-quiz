@@ -11,5 +11,17 @@ services:
     volumes:
       - pgdata:/var/lib/postgresql/data
 
+  # Browser-based DB viewer — open http://localhost:8080
+  # (server: postgres, user/pass: carsquiz, database: cars_quiz)
+  adminer:
+    image: adminer:latest
+    ports:
+      - "8080:8080"
+    environment:
+      # Prefill the login form so you land straight on the Postgres server.
+      ADMINER_DEFAULT_SERVER: postgres
+    depends_on:
+      - postgres
+
 volumes:
   pgdata:
