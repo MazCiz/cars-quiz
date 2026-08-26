@@ -57,12 +57,17 @@ export default async function Home() {
         </ul>
 
         {apiUp ? (
-          <Link
-            href="/quiz"
-            className="mt-6 block w-full rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-sm font-medium py-3 text-center"
-          >
-            Take the quiz →
-          </Link>
+          <>
+            <Link
+              href="/quiz"
+              className="mt-6 block w-full rounded-lg bg-neutral-900 dark:bg-neutral-100 text-white dark:text-neutral-900 text-sm font-medium py-3 text-center"
+            >
+              Take the quiz →
+            </Link>
+            <Link href="/metrics" className="mt-3 block text-center text-xs text-neutral-500 hover:underline">
+              See stats & suggest a question
+            </Link>
+          </>
         ) : (
           <p className="mt-6 text-xs text-neutral-400">
             Start the API: in ../api run `php artisan serve`, and `docker compose up -d` for Postgres.

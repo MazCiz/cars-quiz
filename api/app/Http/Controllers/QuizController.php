@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\QuizAttempt;
 use App\Models\QuizQuestion;
+use App\Models\QuizQuestionSuggestion;
 use App\Services\RecommendationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -95,5 +96,73 @@ class QuizController extends Controller
             'source' => $result['source'],
             'total_time_ms' => $totalMs,
         ]);
+    }
+
+    /**
+     * GET /api/quiz/metrics — aggregate stats across all attempts:
+     * approximate time spent per question and how often each answer was chosen.
+     */
+    public function metrics(): JsonResponse
+    {
+        $questions = QuizQuestion::orderBy('position')->get();
+
+        // Average time + response count per question.
+        $times = DB::table('quiz_answers')
+            ->select('question_key', DB::raw('AVG(time_spent_ms) as avg_ms'), DB::raw('COUNT(*) as responses'))
+            ->groupBy('question_key')
+            ->get()
+            ->keyBy('question_key');
+
+        // Answer counts per (question, value).
+        $counts = DB::table('quiz_answers')
+            ->select('question_key', 'value', DB::raw('COUNT(*) as count'))
+            ->groupBy('question_key', 'value')
+            ->get()
+            ->groupBy('question_key');
+
+        $out = $questions->map(function ($q) use ($times, $counts) {
+            $labels = collect($q->options)->pluck('label', 'value');
+
+            $answerRows = ($counts->get($q->key) ?? collect())
+                ->map(fn ($r) => [
+                    'value' => $r->value,
+                    'label' => $labels->get($r->value, $r->value),
+                    'count' => (int) $r->count,
+                ])
+                ->sortByDesc('count')
+                ->values();
+
+            $t = $times->get($q->key);
+
+            return [
+                'key' => $q->key,
+                'text' => $q->text,
+                'avg_time_ms' => $t ? (int) round($t->avg_ms) : null,
+                'responses' => $t ? (int) $t->responses : 0,
+                'answers' => $answerRows,
+                'top_answer' => $answerRows->first(),
+            ];
+        });
+
+        return response()->json([
+            'total_attempts' => QuizAttempt::count(),
+            'questions' => $out,
+        ]);
+    }
+
+    /**
+     * POST /api/quiz/suggestions — capture a user-suggested question. Stored in
+     * its own table for review; never added to the live quiz.
+     */
+    public function suggest(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'text' => ['required', 'string', 'min:5', 'max:500'],
+            'email' => ['nullable', 'email', 'max:255'],
+        ]);
+
+        $suggestion = QuizQuestionSuggestion::create($data);
+
+        return response()->json(['ok' => true, 'id' => $suggestion->id], 201);
     }
 }

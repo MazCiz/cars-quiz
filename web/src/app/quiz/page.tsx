@@ -183,6 +183,8 @@ export default function QuizPage() {
 
         <p className="mt-4 text-center text-xs text-neutral-400">
           <Link href="/" className="hover:underline">Home</Link>
+          {" · "}
+          <Link href="/metrics" className="hover:underline">Stats & suggest a question</Link>
         </p>
       </div>
     </main>
