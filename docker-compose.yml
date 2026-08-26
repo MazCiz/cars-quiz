@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: carsquiz
+      POSTGRES_PASSWORD: carsquiz
+      POSTGRES_DB: cars_quiz
+    # Host port 5433 so it doesn't clash with other local Postgres instances.
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

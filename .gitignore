@@ -1,0 +1,13 @@
+# Node / Next.js
+web/node_modules/
+web/.next/
+web/out/
+# Laravel
+api/vendor/
+api/storage/*.key
+api/.phpunit.result.cache
+# Env & secrets
+**/.env
+**/.env.local
+# OS
+.DS_Store
