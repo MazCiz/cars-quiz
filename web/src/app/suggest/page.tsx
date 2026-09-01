@@ -52,8 +52,10 @@ export default function SuggestPage() {
             </div>
           ) : (
             <form onSubmit={submit} className="flex flex-col gap-3">
-              <label className="text-xs font-medium text-neutral-500">Your question</label>
+              <label htmlFor="question" className="text-xs font-medium text-neutral-500">Your question</label>
               <textarea
+                id="question"
+                name="question"
                 required
                 minLength={5}
                 maxLength={500}
@@ -63,8 +65,10 @@ export default function SuggestPage() {
                 rows={3}
                 className="w-full rounded-lg border border-neutral-200 dark:border-neutral-700 bg-transparent px-3 py-2 text-sm focus:outline-none focus:border-neutral-500"
               />
-              <label className="text-xs font-medium text-neutral-500">Email (optional)</label>
+              <label htmlFor="email" className="text-xs font-medium text-neutral-500">Email (optional)</label>
               <input
+                id="email"
+                name="email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}

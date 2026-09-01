@@ -5,20 +5,18 @@ services:
       POSTGRES_USER: carsquiz
       POSTGRES_PASSWORD: carsquiz
       POSTGRES_DB: cars_quiz
-    # Host port 5433 so it doesn't clash with other local Postgres instances.
     ports:
       - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
 
-  # Browser-based DB viewer — open http://localhost:8080
+  # Browser-based DB viewer — http://localhost:8080
   # (server: postgres, user/pass: carsquiz, database: cars_quiz)
   adminer:
     image: adminer:latest
     ports:
       - "8080:8080"
     environment:
-      # Prefill the login form so you land straight on the Postgres server.
       ADMINER_DEFAULT_SERVER: postgres
     depends_on:
       - postgres

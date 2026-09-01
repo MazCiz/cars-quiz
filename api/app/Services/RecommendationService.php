@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\QuizQuestion;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -15,12 +16,15 @@ class RecommendationService
      * rule-based recommendation so the quiz still works without an API key.
      *
      * @param  array<string,string>  $answers  keyed by question slug
+     * @param  Collection<string, QuizQuestion>|null  $questions  the questions the
+     *                                                            caller already loaded, reused to avoid a second DB read; loaded
+     *                                                            here only when a caller doesn't supply them.
      * @return array{text: string, source: string}
      */
-    public function generate(array $answers): array
+    public function generate(array $answers, ?Collection $questions = null): array
     {
         // Human-readable "Question: Answer" lines, in question order.
-        $lines = $this->describeAnswers($answers);
+        $lines = $this->describeAnswers($answers, $questions);
 
         $apiKey = config('services.anthropic.key');
         if (empty($apiKey)) {
@@ -63,11 +67,12 @@ class RecommendationService
      * seeded questions, so the AI sees natural language rather than slugs.
      *
      * @param  array<string,string>  $answers
+     * @param  Collection<string, QuizQuestion>|null  $questions
      * @return array<int,string>
      */
-    private function describeAnswers(array $answers): array
+    private function describeAnswers(array $answers, ?Collection $questions = null): array
     {
-        $questions = QuizQuestion::orderBy('position')->get();
+        $questions ??= QuizQuestion::orderBy('position')->get();
         $lines = [];
 
         foreach ($questions as $q) {
@@ -122,7 +127,7 @@ class RecommendationService
         ][$answers['priority'] ?? ''] ?? 'Balance running costs against comfort and features.';
 
         return "Based on your answers, look for {$body}. On fuel, {$fuelHint}. {$priorityNote} ".
-            "Take a few candidates for a test drive and compare running costs before deciding. ".
-            "(This is a rule-based suggestion — add an Anthropic API key to get a richer, AI-personalised recommendation.)";
+            'Take a few candidates for a test drive and compare running costs before deciding. '.
+            '(This is a rule-based suggestion — add an Anthropic API key to get a richer, AI-personalised recommendation.)';
     }
 }

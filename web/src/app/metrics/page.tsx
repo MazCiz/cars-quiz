@@ -30,7 +30,8 @@ export default function MetricsPage() {
       try {
         const res = await fetch(`${API_URL}/quiz/metrics`, { cache: "no-store" });
         if (!res.ok) throw new Error(`API ${res.status}`);
-        setMetrics(await res.json());
+        const { data } = await res.json();
+        setMetrics(data);
       } catch {
         setError(`Couldn't reach the API at ${API_URL}.`);
       }

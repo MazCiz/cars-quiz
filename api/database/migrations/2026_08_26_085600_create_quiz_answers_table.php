@@ -22,6 +22,9 @@ return new class extends Migration
             $table->timestamps();
 
             $table->index(['attempt_id', 'position']);
+            // One answer per question within an attempt — enforced in the schema
+            // so a malformed payload can never record the same question twice.
+            $table->unique(['attempt_id', 'question_key']);
         });
     }
 

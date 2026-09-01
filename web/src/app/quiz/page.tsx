@@ -28,7 +28,7 @@ export default function QuizPage() {
         const res = await fetch(`${API_URL}/quiz/questions`, { cache: "no-store" });
         if (!res.ok) throw new Error(`API ${res.status}`);
         const data = await res.json();
-        setQuestions(data.questions ?? []);
+        setQuestions(data.data ?? []);
         setPhase("quiz");
       } catch {
         setError(`Couldn't reach the API at ${API_URL}. Is the Laravel server running?`);
@@ -70,7 +70,7 @@ export default function QuizPage() {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error(`API ${res.status}`);
-      const data = await res.json();
+      const { data } = await res.json();
       setResult({ text: data.recommendation, source: data.source, totalMs: data.total_time_ms ?? 0 });
       setPhase("result");
     } catch {

@@ -31,7 +31,7 @@ cd api
 cp .env.example .env        # DB settings already point at the compose Postgres
 composer install            # if dependencies aren't installed yet
 php artisan key:generate    # if APP_KEY is empty
-php artisan migrate
+php artisan migrate --seed  # --seed populates the quiz questions; without it the quiz is empty
 php artisan serve --port=8000
 
 # 3. Web — Next.js on http://localhost:3000
